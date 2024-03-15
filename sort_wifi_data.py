@@ -1,5 +1,6 @@
 import pywifi as pw
 import json
+import time
 import os
 
 
@@ -54,7 +55,6 @@ while (text != "q"):
         currentArea = oldArea + 1
         currentPoint = 0
         currentVersion = 1
-        textC = str(input("Launch with ???"))
         areaPath = r"C:\Users\nono\Documents\GitHub\if23_projet2024\data\area_{}".format(currentArea)
         pointPath = r"C:\Users\nono\Documents\GitHub\if23_projet2024\data\area_{}\position_{}".format(currentArea,currentPoint)
         os.mkdir(areaPath)
@@ -69,26 +69,27 @@ while (text != "q"):
         currentArea = oldArea
         currentPoint = oldPoint
         currentVersion = oldVersion + 1
-        print(currentVersion)
+        count = 5
+        while (count != 0):
+            time.sleep(5)
+            with open(r"C:\Users\nono\Documents\GitHub\if23_projet2024\doc.json","w") as fichier:
+                    info = {
+                        "currentArea": currentArea,
+                        "currentPoint": currentPoint,
+                        "currentVersion": currentVersion
+                    }
+                    json.dump(info, fichier)
 
-    if (text == "y" or "n" or "c"):
-        with open(r"C:\Users\nono\Documents\GitHub\if23_projet2024\doc.json","w") as fichier:
-                info = {
-                    "currentArea": currentArea,
-                    "currentPoint": currentPoint,
-                    "currentVersion": currentVersion
-                }
-                print(info)
-                json.dump(info, fichier)
 
+            versionPath = r"C:\Users\nono\Documents\GitHub\if23_projet2024\data\area_{}\position_{}\version_{}.json".format(currentArea,currentPoint,currentVersion)
+            datas = {}
+            for data in results:
+                bssid = data.bssid
+                signal = data.signal
+                datas[bssid] = signal
 
-        versionPath = r"C:\Users\nono\Documents\GitHub\if23_projet2024\data\area_{}\position_{}\version_{}.json".format(currentArea,currentPoint,currentVersion)
-        datas = {}
-        for data in results:
-            bssid = data.bssid
-            signal = data.signal
-            datas[bssid] = signal
-
-        with open(versionPath, "w") as fichier:
-            json.dump(datas, fichier)
+            with open(versionPath, "w") as fichier:
+                json.dump(datas, fichier)
+            currentVersion += 1
+            count += -1
 
