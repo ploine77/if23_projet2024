@@ -42,11 +42,6 @@ while (text != "q"):
     elif (not os.path.exists(pointPath)):
         os.mkdir(pointPath)
 
-    ## Start scanning wifi
-    profile = pw.PyWiFi()
-    iface = profile.interfaces()[0]
-    iface.scan()
-    results = iface.scan_results()
     print("Current area : " + str(oldArea))
     print("Current position : " + str(oldPoint))
     print("Current version : " + str(oldVersion))
@@ -72,6 +67,12 @@ while (text != "q"):
         count = 5
         while (count != 0):
             time.sleep(5)
+            ## Start scanning wifi
+            profile = pw.PyWiFi()
+            iface = profile.interfaces()[0]
+            iface.scan()
+            results = iface.scan_results()
+            iface.close()
             with open(r"C:\Users\nono\Documents\GitHub\if23_projet2024\doc.json","w") as fichier:
                     info = {
                         "currentArea": currentArea,
