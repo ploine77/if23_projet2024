@@ -17,8 +17,6 @@ df95 = pd.read_csv(r'C:\Users\nono\Documents\GitHub\if23_projet2024\files\treate
 df200 = pd.read_csv(r'C:\Users\nono\Documents\GitHub\if23_projet2024\files\treatedData200.csv')
 dfMean = pd.read_csv(r'C:\Users\nono\Documents\GitHub\if23_projet2024\files\treatedDataMean.csv')
 
-sc = StandardScaler()
-
 value0 = df0.drop(labels=["Position", "Version","Area"], axis=1).values
 Z0 = linkage(value0,method='ward',metric='euclidean')
 

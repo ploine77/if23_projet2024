@@ -1,0 +1,80 @@
+import json
+import numpy as np
+import pandas as pd
+import os
+from matplotlib import pyplot as plt
+from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
+
+keysPath = r"C:\Users\nono\Documents\GitHub\if23_projet2024\files\keys.json"
+docPath = r'C:\Users\nono\Documents\GitHub\if23_projet2024\data'
+
+with open(keysPath, "r") as fichier_json:
+    keys = json.load(fichier_json)
+
+print("Choose a value to test")
+dataValue = int(input())
+
+dataPath = r"C:\Users\nono\Documents\GitHub\if23_projet2024\files\data_{}".format(dataValue)
+
+if (not os.path.exists(dataPath)):
+    os.mkdir(dataPath)
+
+df = pd.read_csv(r"C:\Users\nono\Documents\GitHub\if23_projet2024\files\untreatedData\untreatedData.csv")
+
+df.replace("NaN", np.nan, inplace=True)
+dfMean = df.copy()
+
+count = 0
+for column in df.columns[3:]:
+    count+=1
+    for area in df['Area'].unique():
+        for position in df['Position'].unique():
+            columnsPos = (df['Area'] == area) & (df['Position'] == position)
+            df.loc[columnsPos, column] = df.loc[columnsPos, column].fillna(-dataValue)
+        columnArea = (df['Area'] == area)
+        df.loc[columnArea, column] = df.loc[columnArea, column].fillna(-dataValue)
+
+df.to_csv(r'C:\Users\nono\Documents\GitHub\if23_projet2024\files\data_{}\treated_data_{}.csv'.format(dataValue,dataValue))
+
+count = 0
+for column in dfMean.columns[3:]:
+    count+=1
+    for area in dfMean['Area'].unique():
+        for position in dfMean['Position'].unique():
+            columnsPos = (dfMean['Area'] == area) & (dfMean['Position'] == position)
+            meanPos = dfMean.loc[columnsPos, column].mean()
+            dfMean.loc[columnsPos, column] = dfMean.loc[columnsPos, column].fillna(meanPos)
+        columnArea = (dfMean['Area'] == area)
+        meanArea = dfMean.loc[columnArea, column].mean()
+        if np.isnan(meanArea):
+            meanArea = -95
+        dfMean.loc[columnArea, column] = dfMean.loc[columnArea, column].fillna(meanArea)
+
+dfMean.to_csv(r'C:\Users\nono\Documents\GitHub\if23_projet2024\files\data_{}\treated_data_mean_{}.csv'.format(dataValue,dataValue))
+
+
+value = df.drop(labels=["Position", "Version","Area"], axis=1).values
+valueMean = dfMean.drop(labels=["Position", "Version","Area"], axis=1).values
+Z = linkage(value,method='ward',metric='euclidean')
+ZMean = linkage(valueMean,method='ward',metric='euclidean')
+
+num_clusters = 13
+
+clusters = fcluster(Z, t=num_clusters, criterion='maxclust')
+clustersMean = fcluster(ZMean, t=num_clusters, criterion='maxclust')
+
+distanceCut = Z[-(num_clusters-1), 2]
+distanceCutMean = ZMean[-(num_clusters-1), 2]
+
+plt.title("CAH Data with 0")
+dendrogram(Z,labels=df.index, color_threshold = distanceCut)
+#plt.savefig()
+
+plt.title("CAH Data with 0")
+dendrogram(Z,labels=df.index, color_threshold = distanceCut)
+#plt.savefig()
+
+cm = pd.crosstab(df.Area,clusters)
+cmMean = pd.crosstab(df.Area,clustersMean)
+
+#cm.to_csv(r'C:\Users\nono\Documents\GitHub\if23_projet2024\files\data_{}\treated_data_mean_{}.csv'.format(dataValue,dataValue)')
