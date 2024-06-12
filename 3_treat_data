@@ -4,12 +4,19 @@ import pandas as pd
 import os
 from matplotlib import pyplot as plt
 from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
+from sklearn import cluster
 
 keysPath = r"C:\Users\nono\Documents\GitHub\if23_projet2024\files\keys.json"
 docPath = r'C:\Users\nono\Documents\GitHub\if23_projet2024\data'
 
 with open(keysPath, "r") as fichier_json:
     keys = json.load(fichier_json)
+
+untreatedDataPath = r"C:\Users\nono\Documents\GitHub\if23_projet2024\files\untreatedData"
+
+if (not os.path.exists(untreatedDataPath)):
+    print("Error : Run 2_get_formatted_data before")
+    exit()
 
 print("Choose a value to test")
 dataValue = int(input())
@@ -68,13 +75,28 @@ distanceCutMean = ZMean[-(num_clusters-1), 2]
 
 plt.title("CAH Data with 0")
 dendrogram(Z,labels=df.index, color_threshold = distanceCut)
-#plt.savefig()
+plt.savefig(r'C:\Users\nono\Documents\GitHub\if23_projet2024\files\data_{}\cah_{}.png'.format(dataValue,dataValue))
 
 plt.title("CAH Data with 0")
 dendrogram(Z,labels=df.index, color_threshold = distanceCut)
-#plt.savefig()
+plt.savefig(r'C:\Users\nono\Documents\GitHub\if23_projet2024\files\data_{}\cah_mean_{}.png'.format(dataValue,dataValue))
 
 cm = pd.crosstab(df.Area,clusters)
 cmMean = pd.crosstab(df.Area,clustersMean)
 
-#cm.to_csv(r'C:\Users\nono\Documents\GitHub\if23_projet2024\files\data_{}\treated_data_mean_{}.csv'.format(dataValue,dataValue)')
+cm.to_csv(r'C:\Users\nono\Documents\GitHub\if23_projet2024\files\data_{}\confusion_matrix_cah_{}.csv'.format(dataValue,dataValue))
+cmMean.to_csv(r'C:\Users\nono\Documents\GitHub\if23_projet2024\files\data_{}\confusion_matrix_cah_mean_{}.csv'.format(dataValue,dataValue))
+
+
+kmeans = cluster.KMeans(n_clusters=13)
+kmeansMean = cluster.KMeans(n_clusters=13)
+
+kmeans.fit(value)
+kmeansMean.fit(valueMean)
+
+cm = pd.crosstab(df.Area,kmeans.labels_)
+cmMean = pd.crosstab(df.Area,kmeansMean.labels_)
+
+cm.to_csv(r'C:\Users\nono\Documents\GitHub\if23_projet2024\files\data_{}\confusion_matrix_kmean_{}.csv'.format(dataValue,dataValue))
+cmMean.to_csv(r'C:\Users\nono\Documents\GitHub\if23_projet2024\files\data_{}\confusion_matrix_kmean_mean_{}.csv'.format(dataValue,dataValue))
+
