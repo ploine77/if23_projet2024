@@ -2,18 +2,18 @@ import os
 import json
 import pandas as pd
 
-docPath = r'C:\Users\nono\Documents\GitHub\if23_projet2024\data'
+docPath = 'data'
 
 keysList = []
 count = 2
 
 # We treat all data to set NaN if at a position we have an unknown wifi sources
 for area in os.listdir(docPath):
-    areaPath = r"C:\Users\nono\Documents\GitHub\if23_projet2024\data\{}".format(area)
+    areaPath = r"data\{}".format(area)
     for position in os.listdir(areaPath):
-        positionPath = r"C:\Users\nono\Documents\GitHub\if23_projet2024\data\{}\{}".format(area,position)
+        positionPath = r"data\{}\{}".format(area,position)
         for value in os.listdir(positionPath):
-            valuePath = r"C:\Users\nono\Documents\GitHub\if23_projet2024\data\{}\{}\{}".format(area,position,value)
+            valuePath = r"data\{}\{}\{}".format(area,position,value)
             with open(valuePath, "r") as fichier_json:
                 valueDatas = json.load(fichier_json)
             keys = valueDatas.keys()
@@ -21,7 +21,12 @@ for area in os.listdir(docPath):
                 if key not in keysList:
                     keysList.append(key)
 
-keysPath = r"C:\Users\nono\Documents\GitHub\if23_projet2024\files\keys.json"
+filesPath = 'files'
+
+if (not os.path.exists(filesPath)):
+    os.mkdir(filesPath)
+
+keysPath = r"files\keys.json"
 with open(keysPath, "w") as fichier_json:
     json.dump(keysList, fichier_json, indent=5)
 
@@ -29,15 +34,15 @@ datas = {}
 dfDatas = []
 
 for area in os.listdir(docPath):
-    areaPath = r"C:\Users\nono\Documents\GitHub\if23_projet2024\data\{}".format(area)
+    areaPath = r"data\{}".format(area)
     datas[area]={}
     for position in os.listdir(areaPath):
-        positionPath = r"C:\Users\nono\Documents\GitHub\if23_projet2024\data\{}\{}".format(area,position)
+        positionPath = "data\{}\{}".format(area,position)
         datas[area][position] = {}
         count = 0
         dfData = []
         for value in os.listdir(positionPath):
-            valuePath = r"C:\Users\nono\Documents\GitHub\if23_projet2024\data\{}\{}\{}".format(area,position,value)
+            valuePath = r"data\{}\{}\{}".format(area,position,value)
             datas[area][position][count]={}
             with open(valuePath, "r") as fichier_json:
                 valueDatas = json.load(fichier_json)
@@ -55,15 +60,15 @@ for area in os.listdir(docPath):
 
 df = pd.DataFrame(dfDatas)
 
-untreatedDataPath = r'C:\Users\nono\Documents\GitHub\if23_projet2024\files\untreatedData'
+untreatedDataPath = r'files\untreatedData'
 
 if (not os.path.exists(untreatedDataPath)):
     os.mkdir(untreatedDataPath)
 
 # Save file as csv with NaN
-df.to_csv(r'C:\Users\nono\Documents\GitHub\if23_projet2024\files\untreatedData\untreatedData.csv')
+df.to_csv(r'files\untreatedData\untreatedData.csv')
 
 # Save file as json
-dataPath = r"C:\Users\nono\Documents\GitHub\if23_projet2024\files\untreatedData\untreatedData.json"
+dataPath = r"files\untreatedData\untreatedData.json"
 with open(dataPath, "w") as fichier_json:
     json.dump(datas, fichier_json, indent=5)

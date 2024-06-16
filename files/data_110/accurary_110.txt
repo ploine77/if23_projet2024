@@ -1,0 +1,6 @@
+RFC : 0.989247311827957 
+RFC with mean : 1.0 
+KNN : 0.9301075268817204 
+KNN with mean : 1.0 
+SVM : 0.989247311827957 
+SVM with mean : 1.0 
